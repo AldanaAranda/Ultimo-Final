@@ -12,20 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class CuentaService {
-    CuentaDao cuentaDao = new CuentaDao();
 
+    @Autowired
+    CuentaDao cuentaDao;
     @Autowired
     ClienteService clienteService;
 
-    //Generar casos de test para darDeAltaCuenta
-    //    1 - cuenta existente
-    //    2 - cuenta no soportada
-    //    3 - cliente ya tiene cuenta de ese tipo
-    //    4 - cuenta creada exitosamente
     public void darDeAltaCuenta(Cuenta cuenta, long dniTitular) throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoCuentaNoSoportadaException {
         if (cuentaDao.find(cuenta.getNumeroCuenta()) != null) {
             throw new CuentaAlreadyExistsException("La cuenta " + cuenta.getNumeroCuenta() + " ya existe.");
@@ -66,7 +63,11 @@ public class CuentaService {
         return false;
     }
 
-        public Cuenta find ( long id){
+    public Cuenta find ( long id){
             return cuentaDao.find(id);
         }
+
+    public List<Cuenta> obtenerCuentasPorCliente(long dni) {
+        return cuentaDao.getCuentasByCliente(dni);
+    }
 }

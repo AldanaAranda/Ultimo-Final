@@ -25,4 +25,15 @@ public class ClienteController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/{dni}")
+    public ResponseEntity<?> obtenerCliente(@PathVariable long dni) {
+        try {
+            Cliente cliente = clienteService.buscarClientePorDni(dni);
+            return ResponseEntity.ok(cliente);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -1,29 +1,18 @@
 package ar.utn.frbb.tup.spboot_demo.persistence;
 
 import ar.utn.frbb.tup.spboot_demo.model.Cliente;
-import ar.utn.frbb.tup.spboot_demo.model.Cuenta;
 import ar.utn.frbb.tup.spboot_demo.persistence.entity.ClienteEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClienteDao extends AbstractBaseDao{
 
-    @Autowired
-    CuentaDao cuentaDao;
-
     public Cliente find(long dni, boolean loadComplete) {
-        if (getInMemoryDatabase().get(dni) == null)
+        if (getInMemoryDatabase().get(dni) == null){
             return null;
-        Cliente cliente =   ((ClienteEntity) getInMemoryDatabase().get(dni)).toCliente();
-        if (loadComplete) {
-            for (Cuenta cuenta :
-                    cuentaDao.getCuentasByCliente(dni)) {
-                cliente.addCuenta(cuenta);
-            }
         }
-        return cliente;
 
+        return ((ClienteEntity) getInMemoryDatabase().get(dni)).toCliente();
     }
 
     public void save(Cliente cliente) {

@@ -8,13 +8,17 @@ import ar.utn.frbb.tup.spboot_demo.persistence.ClienteDao;
 import ar.utn.frbb.tup.spboot_demo.persistence.CuentaDao;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class ClienteService {
 
     ClienteDao clienteDao;
+    CuentaDao cuentaDao;
 
-    public ClienteService(ClienteDao clienteDao) {
+    public ClienteService(ClienteDao clienteDao, CuentaDao cuentaDao) {
         this.clienteDao = clienteDao;
+        this.cuentaDao = cuentaDao;
     }
 
     public void darDeAltaCliente(Cliente cliente) throws ClienteAlreadyExistsException {
@@ -32,11 +36,17 @@ public class ClienteService {
             throw new IllegalArgumentException("El cliente debe ser mayor a 18 años");
         }
 
+        if (cliente.getBanco() == null) {
+            cliente.setBanco("No informado");
+        }
+
+        cliente.setFechaAlta(LocalDate.now());
         clienteDao.save(cliente);
     }
 
     public void agregarCuenta(Cuenta cuenta, long dniTitular) throws TipoCuentaAlreadyExistsException {
         Cliente titular = buscarClientePorDni(dniTitular);
+        cuenta.setDniTitular(dniTitular);
         cuenta.setTitular(titular);
         if (titular.tieneCuenta(cuenta.getTipoCuenta(), cuenta.getMoneda())) {
             throw new TipoCuentaAlreadyExistsException("El cliente ya posee una cuenta de ese tipo y moneda");
@@ -46,10 +56,12 @@ public class ClienteService {
     }
 
     public Cliente buscarClientePorDni(long dni) {
-        Cliente cliente = clienteDao.find(dni, true);
+        Cliente cliente = clienteDao.find(dni, false);
         if(cliente == null) {
             throw new IllegalArgumentException("El cliente no existe");
         }
+        cliente.getCuentas().clear();
+        cliente.getCuentas().addAll(cuentaDao.getCuentasByCliente(dni));
         return cliente;
     }
 }

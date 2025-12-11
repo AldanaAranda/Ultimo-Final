@@ -2,6 +2,7 @@ package ar.utn.frbb.tup.spboot_demo.model;
 
 import ar.utn.frbb.tup.spboot_demo.model.exception.CantidadNegativaException;
 import ar.utn.frbb.tup.spboot_demo.model.exception.NoAlcanzaException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -9,13 +10,15 @@ import java.util.Random;
 public class Cuenta {
     private long numeroCuenta;
     LocalDateTime fechaCreacion;
-    int balance;
+    double balance;
     TipoCuenta tipoCuenta;
+    @JsonIgnore
     Cliente titular;
+    private long dniTitular;
     TipoMoneda moneda;
 
     public Cuenta() {
-        this.numeroCuenta = new Random().nextLong();
+        this.numeroCuenta = 1000 + new Random().nextInt(9000);
         this.balance = 0;
         this.fechaCreacion = LocalDateTime.now();
     }
@@ -57,16 +60,24 @@ public class Cuenta {
         return this;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public Cuenta setBalance(int balance) {
+    public Cuenta setBalance(double balance) {
         this.balance = balance;
         return this;
     }
 
-    public void debitarDeCuenta(int cantidadADebitar) throws NoAlcanzaException, CantidadNegativaException {
+    public long getDniTitular() {
+        return dniTitular;
+    }
+
+    public void setDniTitular(long dniTitular) {
+        this.dniTitular = dniTitular;
+    }
+
+    public void debitarDeCuenta(double cantidadADebitar) throws NoAlcanzaException, CantidadNegativaException {
         if (cantidadADebitar < 0) {
             throw new CantidadNegativaException();
         }
@@ -81,7 +92,7 @@ public class Cuenta {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public void forzaDebitoDeCuenta(int i) {
+    public void forzaDebitoDeCuenta(double i) {
         this.balance = this.balance - i;
     }
 

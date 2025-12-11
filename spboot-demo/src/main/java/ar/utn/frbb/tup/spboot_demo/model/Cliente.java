@@ -1,5 +1,6 @@
 package ar.utn.frbb.tup.spboot_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ public class Cliente extends Persona{
     private TipoPersona tipoPersona;
     private String banco;
     private LocalDate fechaAlta;
+    @JsonIgnore
     private Set<Cuenta> cuentas = new HashSet<>();
 
     public TipoPersona getTipoPersona() {
